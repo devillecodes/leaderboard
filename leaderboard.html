@@ -21,4 +21,20 @@
 	{{/if}}
 	<input type="button" class="increment" value="Give 5 Points">
 	<input type="button" class="decrement" value="Take 5 Points">
+	<input type="button" class="remove" value="Remove Player">
+	<p>{{> addPlayerForm}}</p>
+</template>
+
+<template name="addPlayerForm">
+	<form>
+		<p>
+			Name: <input type="text" name="playerName">
+		</p>
+		<p>
+			Score: <input type="text" name="playerScore">
+		</p>
+		<p>
+			<input type="submit" value="Add Player">
+		</p>
+	</form>
 </template>
