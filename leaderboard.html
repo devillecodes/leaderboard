@@ -9,9 +9,16 @@
 
 <template name="leaderboard">
 	<p>Players ({{playerCount}}) -</p>
+	
 	<ul>
 		{{#each player}}
 			<li class="player {{selectedClass}}">{{name}}: {{score}}</li>
 		{{/each}}
 	</ul>
+	
+	{{#if showSelectedPlayer}}
+		<p>Selected Player: {{showSelectedPlayer.name}}</p>
+	{{/if}}
+	<input type="button" class="increment" value="Give 5 Points">
+	<input type="button" class="decrement" value="Take 5 Points">
 </template>
