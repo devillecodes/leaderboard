@@ -10,6 +10,14 @@ if (Meteor.isClient) {
     
     'playerCount': function() {
       return PlayerList.find().count();
+    },
+
+    'selectedClass': function() {
+      var playerId = this._id;
+      var selectedPlayer = Session.get('selectedPlayer');
+      if (playerId == selectedPlayer) {
+        return "selected";
+      }
     }
 
   });
@@ -17,7 +25,8 @@ if (Meteor.isClient) {
   Template.leaderboard.events({
     
     'click .player': function () {
-      console.log("You clicked an li element");
+      var playerId = this._id;
+      Session.set('selectedPlayer', playerId);
     }
 
   });
