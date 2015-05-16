@@ -5,11 +5,16 @@ if (Meteor.isClient) {
   Template.leaderboard.helpers({
     
     'player': function() {
-      return PlayerList.find({}, {sort: {score: -1, name: 1}});
+      var currentUserId = Meteor.userId();
+      return PlayerList.find(
+          {createdBy: currentUserId}, 
+          {sort: {score: -1, name: 1}}
+        );
     },
     
     'playerCount': function() {
-      return PlayerList.find().count();
+      var currentUserId = Meteor.userId();
+      return PlayerList.find({createdBy: currentUserId}).count();
     },
 
     'selectedClass': function() {
@@ -56,6 +61,7 @@ if (Meteor.isClient) {
     'submit form': function(event) {
       event.preventDefault();
 
+      var currentUserId = Meteor.userId();
       var playerName = event.target.playerName.value;
       var playerScore = event.target.playerScore.value;
 
@@ -64,7 +70,8 @@ if (Meteor.isClient) {
       if (promptResult) {  
         PlayerList.insert({
           name: playerName,
-          score: playerScore
+          score: playerScore,
+          createdBy: currentUserId
         });
 
         event.target.playerName.value = "";
