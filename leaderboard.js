@@ -2,19 +2,16 @@ PlayerList = new Mongo.Collection('players');
 
 if (Meteor.isClient) {
 
+  Meteor.subscribe('thePlayers');
+
   Template.leaderboard.helpers({
     
     'player': function() {
-      var currentUserId = Meteor.userId();
-      return PlayerList.find(
-          {createdBy: currentUserId}, 
-          {sort: {score: -1, name: 1}}
-        );
+      return PlayerList.find({}, {sort: {score: -1, name: 1}});
     },
     
     'playerCount': function() {
-      var currentUserId = Meteor.userId();
-      return PlayerList.find({createdBy: currentUserId}).count();
+      return PlayerList.find({}).count();
     },
 
     'selectedClass': function() {
@@ -27,6 +24,7 @@ if (Meteor.isClient) {
 
     'showSelectedPlayer': function() {
       var selectedPlayer = Session.get('selectedPlayer');
+     
       return PlayerList.findOne(selectedPlayer);
     }
 
@@ -63,7 +61,7 @@ if (Meteor.isClient) {
 
       var currentUserId = Meteor.userId();
       var playerName = event.target.playerName.value;
-      var playerScore = event.target.playerScore.value;
+      var playerScore = parseInt(event.target.playerScore.value);
 
       var promptResult = confirm("Are you sure you want to add player '" + playerName + "'?");
 
@@ -84,5 +82,9 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
+  Meteor.publish('thePlayers', function() {
+    var currentUserId = this.userId;
 
+    return PlayerList.find({createdBy: currentUserId});
+  });
 }
