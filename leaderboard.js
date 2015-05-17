@@ -39,17 +39,17 @@ if (Meteor.isClient) {
 
     'click .increment': function() {
       var selectedPlayer = Session.get('selectedPlayer');
-      PlayerList.update(selectedPlayer, {$inc: {score: 5}});
+      Meteor.call('incrementPlayerScore', selectedPlayer, 5);
     },
 
     'click .decrement': function() {
       var selectedPlayer = Session.get('selectedPlayer');
-      PlayerList.update(selectedPlayer, {$inc: {score: -5}});
+      Meteor.call('incrementPlayerScore', selectedPlayer, -5);
     },
 
     'click .remove': function() {
       var selectedPlayer = Session.get('selectedPlayer');
-      PlayerList.remove(selectedPlayer);
+      Meteor.call('removePlayerData', selectedPlayer);
     }
 
   });
@@ -59,18 +59,13 @@ if (Meteor.isClient) {
     'submit form': function(event) {
       event.preventDefault();
 
-      var currentUserId = Meteor.userId();
       var playerName = event.target.playerName.value;
       var playerScore = parseInt(event.target.playerScore.value);
 
       var promptResult = confirm("Are you sure you want to add player '" + playerName + "'?");
 
       if (promptResult) {  
-        PlayerList.insert({
-          name: playerName,
-          score: playerScore,
-          createdBy: currentUserId
-        });
+        Meteor.call('insertPlayerData', playerName, playerScore);
 
         event.target.playerName.value = "";
         event.target.playerScore.value = "";
@@ -86,5 +81,27 @@ if (Meteor.isServer) {
     var currentUserId = this.userId;
 
     return PlayerList.find({createdBy: currentUserId});
+  });
+
+  Meteor.methods({
+    
+    'insertPlayerData': function(playerName, playerScore) {
+      var currentUserId = Meteor.userId();
+
+      PlayerList.insert({
+        name: playerName,
+        score: playerScore,
+        createdBy: currentUserId
+      });
+    },
+
+    'removePlayerData': function(selectedPlayer) {
+      PlayerList.remove(selectedPlayer);
+    },
+
+    'incrementPlayerScore': function(selectedPlayer, incrVal) {
+      PlayerList.update(selectedPlayer, {$inc: {score: incrVal}});
+    }
+
   });
 }
